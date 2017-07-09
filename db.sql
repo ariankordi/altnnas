@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Jul 09, 2017 at 11:39 AM
+-- Generation Time: Jul 09, 2017 at 12:17 PM
 -- Server version: 10.1.21-MariaDB
 -- PHP Version: 7.0.20
 
@@ -130,6 +130,21 @@ CREATE TABLE `people` (
   `utcOffset` int(6) NOT NULL DEFAULT '0'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `person_agreements`
+--
+
+CREATE TABLE `person_agreements` (
+  `id` bigint(20) NOT NULL,
+  `pid` int(10) NOT NULL,
+  `agreementDate` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `location` text,
+  `agreement` text NOT NULL,
+  `version` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
 --
 -- Indexes for dumped tables
 --
@@ -175,6 +190,12 @@ ALTER TABLE `people`
   ADD PRIMARY KEY (`pid`);
 
 --
+-- Indexes for table `person_agreements`
+--
+ALTER TABLE `person_agreements`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- AUTO_INCREMENT for dumped tables
 --
 
@@ -202,6 +223,11 @@ ALTER TABLE `miis`
 -- AUTO_INCREMENT for table `mii_images`
 --
 ALTER TABLE `mii_images`
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
+--
+-- AUTO_INCREMENT for table `person_agreements`
+--
+ALTER TABLE `person_agreements`
   MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
 --
 -- Constraints for dumped tables

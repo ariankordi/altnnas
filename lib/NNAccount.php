@@ -131,6 +131,7 @@ var $connection;
 	8 => array('Not Found', 404),
 	100 => array('Account ID already exists', 400),
 	103 => array('Email format is invalid', 400),
+	109 => array('Approved %s version is out of date', 400);
 	1100 => array(array('No stored agreement found for this country: %s and type: %s', 400), array('No stored agreement found for this country: %s and type: %s and version: %d', 400)),
 	1104 => array('User ID format is not valid', 400),
 	1600 => array('Unable to process request', 400),
@@ -209,6 +210,20 @@ var $connection;
 		return true;
 		}
 		return false;
+	}
+	private function agreementExistence($type, $version = null, $country = null) {
+	/* To-do: Search for an agreement, take the code for the public agreement show thingy.
+	Throw errors if not found. Use in person creation and agreement viewing.
+	*/
+	}
+	private function agreementValidate($person = null) {
+	/* To-do: Make this check if a user has agreed to an agreement.
+	If not, stop.
+	Check if the user's agreement exists. If not, stop.
+	And then check if the user's agreement is the latest. If not, stop.
+	For the first 2, throw 2001, 0 since that wouldn't really be possible.
+	For the latter, throw 109 with the agreed version.
+	*/
 	}
 	
 	public function NotImplement() {
@@ -324,6 +339,8 @@ var $connection;
 	}
 
 	public function checkDeviceStatus() {
+	$this->deviceValidate();
+	// Placeholder until bans (a core and essential Nintendo Network component) are implemento here
 	echo $this->out(array('device' => array()));
 	
 	}
@@ -332,10 +349,12 @@ var $connection;
 		if(empty($_POST['email']) || !nn_validator(3, $_POST['email'])) {
 		$this->Error(103, 0, 'email');
 		}
+	// The official server would then check if the address doesn't end with @wii.com, but we're not going to.
 	}
 
 	public function createPerson() {
-		$this->deviceValidate();
+	$this->deviceValidate();
+	// Another placeholder until people are implemented
 	echo $this->out(json_decode(json_encode($this->getClientInput(1)), true));
 	}
 

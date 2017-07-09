@@ -2,8 +2,8 @@
 require_once('config.php');
 // If this is a production environment, then check the client.
 if($act_srv_mode > 0) {
-// Real clients will not have a user agent. They will indeed have an X-Nintendo-Platform-ID header.
-	if(isset($_SERVER['HTTP_USER_AGENT']) || !isset($_SERVER['HTTP_X_NINTENDO_PLATFORM_ID'])) {
+// Real clients will have an X-Nintendo-Platform-ID header, and I think that's the only definite thing.
+	if(!isset($_SERVER['HTTP_X_NINTENDO_PLATFORM_ID'])) {
 	// Keep crawlers, etc. away
 	http_response_code(403);
 	exit();

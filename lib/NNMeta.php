@@ -60,6 +60,10 @@ function nn_validator($type, $input = null) {
 				$ok = true;
 			}
 	break;
+	case 5:
+		// To-do
+	break;
+	
 	// more go here
 	default:
 		$ok = true;
