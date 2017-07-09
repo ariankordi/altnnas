@@ -1,4 +1,5 @@
 <?php
+// Config sample. Should be renamed to config.php when finished.
 // MySQL host, username, pass, DB
 $act_mysql_host = null;
 $act_mysql_user = null;
