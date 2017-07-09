@@ -76,7 +76,8 @@ $stmt->execute();
 require_once('router.php');
 $router = new AltoRouter();
 
-// Make this an array_merge and merge with some modular file at some point
+// These are routes for AltoRouter, documentation is at their site.
+// Make this an array_merge and merge with some modular file at some point.
 $router->addRoutes(array(
   array('GET', '/', 'Index', 'Index-root'),
   array('GET', '/v1/api/admin/time', 'GetTime', 'Admin-get-time'),
@@ -93,22 +94,28 @@ array('GET|POST|PUT', '/v1/api/provider[*]', 'NotImplement', 'Not-implemented-er
 //array('GET|POST|PUT', '/v1/api/', 'NotImplement', 'Not-implemented-err4'),
   ));
 $match = $router->match();
+// After matching, load a new NNAccount object.
 require_once 'lib/NNAccount.php';
 
 $thing = new NNAccount($mysql);
+// If we've matched, then do the function in the target (with args)
 if($match) {
 $f = $match['target'];
 $thing->$f($match['params']);
 } else {
+// If not, use the object to throw an error of code 8, which is Not Found.
 $thing->Error(8);
 }
 
-// Error handler
+// Error handler.
 function handle($ex) {
 global $thing;
+// There's probably a $thing if there's an error.
 if(isset($thing)) {
-  $thing->Error(2001);
+// If so, then throw the first variant of 2001.
+  $thing->Error(2001, 0);
 } else {
+// If not, just throw a 500 code.
 http_response_code(500);
 }
   exit();

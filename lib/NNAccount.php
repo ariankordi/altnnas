@@ -1,9 +1,9 @@
 <?php
-
+// Include some functions.
 require_once('NNMeta.php');
 class NNAccount {
 var $connection;
-
+// Constructor, just checks for a MySQLi connection and uses it.
 	public function __construct($mysql = null) {
 		if($mysql) {
 		$mysql->set_charset('utf8mb4');
@@ -117,7 +117,7 @@ var $connection;
 		return $this->xml_encode($a);
 		}
 	}
-	
+	// Throws an error and dies. (exits)
 	public function Error($errno, $var1 = null, $var2 = null) {
 	// errno corresponds to this error list.
 	// var1 corresponds to the variant of an error.
@@ -185,6 +185,7 @@ var $connection;
 	echo $this->out($final_errors);
 	exit();
 	}
+	// Gets client POST input and puts it into an stdClass. The first arg will make this throw a Bad Request error and exit.
 	private function getClientInput($die_on_fail = 0) {
 	$post = file_get_contents('php://input');
 		if(empty($post)) {
@@ -200,9 +201,10 @@ var $connection;
 		}
 		return $thing;
 	}
-	private function deviceValidate() {
+	// Validate if device headers are valid, throws the appropriate error if they aren't.
+	private function deviceValidate($die_on_fail = 1) {
 		$val = nn_validator(4);
-		if(is_string($val)) {
+		if(is_string($val) && $die_on_fail) {
 		$this->Error(2, $val);
 		return true;
 		}
