@@ -1,8 +1,8 @@
 <?php
 // MySQL host, username, pass, DB
-$act_mysql_host = 'localhost';
-$act_mysql_user = 'nnas';
-$act_mysql_pass = 'ewgfkkiXXjrXKpW0iKS39afTZTDwEF8S';
+$act_mysql_host = null;
+$act_mysql_user = null;
+$act_mysql_pass = null;
 $act_mysql_db = 'nnas';
 // Server environment (one letter & 1 number, such as: 'S1')
 $act_srv_env = 'D1';
