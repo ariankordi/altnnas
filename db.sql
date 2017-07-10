@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Jul 09, 2017 at 12:17 PM
+-- Generation Time: Jul 10, 2017 at 01:19 PM
 -- Server version: 10.1.21-MariaDB
 -- PHP Version: 7.0.20
 
@@ -193,7 +193,8 @@ ALTER TABLE `people`
 -- Indexes for table `person_agreements`
 --
 ALTER TABLE `person_agreements`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `e` (`pid`);
 
 --
 -- AUTO_INCREMENT for dumped tables
@@ -256,5 +257,11 @@ ALTER TABLE `miis`
 --
 ALTER TABLE `mii_images`
   ADD CONSTRAINT `d` FOREIGN KEY (`master`) REFERENCES `miis` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints for table `person_agreements`
+--
+ALTER TABLE `person_agreements`
+  ADD CONSTRAINT `e` FOREIGN KEY (`pid`) REFERENCES `people` (`pid`) ON DELETE CASCADE ON UPDATE CASCADE;
 COMMIT;
 
