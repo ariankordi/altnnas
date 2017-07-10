@@ -131,7 +131,7 @@ var $connection;
 	8 => array('Not Found', 404),
 	100 => array('Account ID already exists', 400),
 	103 => array('Email format is invalid', 400),
-	109 => array('Approved %s version is out of date', 400);
+	109 => array('Approved %s version is out of date', 400),
 	1100 => array(array('No stored agreement found for this country: %s and type: %s', 400), array('No stored agreement found for this country: %s and type: %s and version: %d', 400)),
 	1104 => array('User ID format is not valid', 400),
 	1600 => array('Unable to process request', 400),
@@ -211,10 +211,27 @@ var $connection;
 		}
 		return false;
 	}
-	private function agreementExistence($type, $version = null, $country = null) {
-	/* To-do: Search for an agreement, take the code for the public agreement show thingy.
-	Throw errors if not found. Use in person creation and agreement viewing.
-	*/
+	private function getAgreement($type, $country = null, $version = '') {
+	// If the user wants the latest, then the version will be NOT be an int. 
+		$get_latest = (!is_int($version) && $version == '@latest');
+		$query_arg = array(
+		filter_var($type, FILTER_SANITIZE_STRING),
+		filter_var($country, FILTER_SANITIZE_STRING),
+		);
+			if(!$get_latest) {
+			$query_arg[] = filter_var($version, FILTER_VALIDATE_INT);
+			}
+		// Query for the agreements
+		$query = prepared('SELECT country, language, languageName, publishDate, updated, agreeText, mainTitle, nonAgreeText, mainText, type, version FROM agreements WHERE agreements.type = ? AND agreements.country = ? ' . (!$get_latest ? 'AND agreements.version = ? ' : '') . 'ORDER BY updated DESC', $query_arg);
+		if($query->num_rows == 0) {
+			if($get_latest) {
+			$this->Error(1100, 0, array(htmlspecialchars($country), htmlspecialchars($type)));
+			} else {
+			$this->Error(1100, 1, array(htmlspecialchars($country), htmlspecialchars($type), $version));
+			}
+		}
+		// Return fetch_all
+		return $query->fetch_all(MYSQLI_ASSOC);
 	}
 	private function agreementValidate($person = null) {
 	/* To-do: Make this check if a user has agreed to an agreement.
@@ -273,31 +290,12 @@ var $connection;
 		if(isset($err[0])) {
 		$this->Error($err);
 		}
-		// End empty check keks
-			// If the user wants the latest, 
-		$get_latest = (!is_int($args['version']) && $args['version'] == '@latest');
-		$query_arg = array(
-		filter_var($args['agreement'], FILTER_SANITIZE_STRING),
-		filter_var($args['country'], FILTER_SANITIZE_STRING),
-		);
-			if(!$get_latest) {
-			$query_arg[] = filter_var($args['version'], FILTER_VALIDATE_INT);
-			}
-		$query = prepared('SELECT country, language, languageName, publishDate, updated, agreeText, mainTitle, nonAgreeText, mainText, type, version FROM agreements WHERE agreements.type = ? AND agreements.country = ? ' . (!$get_latest ? 'AND agreements.version = ? ' : '') . 'ORDER BY updated DESC', $query_arg);
-
-		if($query->num_rows == 0) {
-			if($get_latest) {
-			$this->Error(1100, 0, array(htmlspecialchars($args['country']), htmlspecialchars($args['agreement'])));
-			} else {
-			$this->Error(1100, 1, array(htmlspecialchars($args['country']), htmlspecialchars($args['agreement']), $args['version']));
-			}
-		}
-		$row = $query->fetch_all(MYSQLI_ASSOC);
+		// End empty checks, first use getAgreement to get the agreement(s)
+		$agreement_query = $this->getAgreement($args['agreement'], $args['country'], $args['version']);
 		$agreements = array('agreements' => array());
-			foreach($row as $agree) {
+			foreach($agreement_query as $agree) {
 				if(!empty($_GET['length'])) {
 				$split_text = str_split($agree['mainText'], $_GET['length']);
-				#var_dump($split_text);
 				$current_index = 1;
 				$main_text = array();
 					foreach($split_text as $a) {
@@ -325,8 +323,8 @@ var $connection;
 			'version' => sprintf('%04d', +$agree['version']),
 			);
 			}
-		echo $this->out($agreements);
 
+		echo $this->out($agreements);
 	}
 	
 	public function checkUserID(array $args) {
