@@ -1,4 +1,6 @@
-# AltNNAS?
+# notice: this repo serves little purpose. i'm just trying to archive my code. look through it if you want i guess
+
+## AltNNAS?
 If you can come up with a better name for this, let me know.
 
 ## Installation
@@ -23,4 +25,3 @@ server_name _;
 }
 
 ```
-I don't use Apache, so I can't give an example for that, but it's pretty simple anyway.
